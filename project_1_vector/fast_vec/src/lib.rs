@@ -61,7 +61,12 @@ impl<T> FastVec<T> {
     // Student 1 and Student 2 should implement this together
     // Use the project handout as a guide for this part!
     pub fn get(&self, i: usize) -> &T {
-        todo!("implement get!");
+        if i >= self.len {
+        panic!("FastVec: get out of bounds");
+        }
+        unsafe{
+            &*self.ptr_to_data.add(i)
+        }
     }
 
     // Student 2 should implement this.
@@ -75,7 +80,17 @@ impl<T> FastVec<T> {
 
     // Student 1 should implement this.
     pub fn remove(&mut self, i: usize) {
-        todo!("implement remove");
+        if i >= self.len {
+            panic!("FastVec: remove out of bounds");
+        }
+        unsafe {
+            ptr::read(self.ptr_to_data.add(i));
+            for j in (i+1)..self.len{
+                let temp = ptr::read(self.ptr_to_data.add(j));
+                ptr::write(self.ptr_to_data.add(j-1), temp);
+            }
+            self.len = self.len - 1;
+        }
     }
 
     // This appears correct but with further testing, you will notice it has a bug!
@@ -83,10 +98,21 @@ impl<T> FastVec<T> {
     // Hint: check out case 2 in memory.rs, which you can run using
     //       cargo run --bin memory
     pub fn clear(&mut self) {
+       unsafe{ 
+        for i in 0..self.len{
+            std::ptr::read(self.ptr_to_data.add(i));
+        }
+
+        if self.ptr_to_data.is_null() == false{
         MALLOC.free(self.ptr_to_data as *mut u8);
+        }
+
         self.ptr_to_data = null_mut();
         self.len = 0;
         self.capacity = 0;
+
+       }
+        
     }
 }
 
