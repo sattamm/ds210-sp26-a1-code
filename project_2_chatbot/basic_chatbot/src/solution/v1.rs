@@ -1,4 +1,5 @@
 use kalosm::language::*;
+use rocket::local::asynchronous;
 
 #[allow(dead_code)]
 pub struct ChatbotV1 {
