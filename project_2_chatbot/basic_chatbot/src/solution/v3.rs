@@ -18,7 +18,7 @@ impl ChatbotV3 {
     pub fn new(model: Llama) -> ChatbotV3 {
         return ChatbotV3 {
             model, 
-            sessions: HashMap::new()
+            sessions: HashMap::new(),
             // Make sure you initialize your struct members here
         };
     }
@@ -56,7 +56,7 @@ impl ChatbotV3 {
             println!("{:?}", history);
             let mut result = Vec::new();
             for msg in history{
-                result.push(msg.to_string());
+                result.push(format!("{:?}", msg));
             }
             result
         }
@@ -64,5 +64,6 @@ impl ChatbotV3 {
         {
             Vec::new()
         }
+    }
     }
 }
