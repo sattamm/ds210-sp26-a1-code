@@ -11,18 +11,16 @@ pub struct ChatbotV3 {
     // together!
     // Need to store one chat session per user.
     // Think of some kind of data structure that can help you with this.
-    model: Llama,
-    sessions: HashMap<String, Chat<Llama>>
+    
 }
 
 impl ChatbotV3 {
     #[allow(dead_code)]
     pub fn new(model: Llama) -> ChatbotV3 {
         return ChatbotV3 {
-            model, 
-            sessions: HashMap::new(),
+            
             // Make sure you initialize your struct members here
-             model,
+            model,
             sessions: HashMap::new(),
         };
     }
@@ -60,6 +58,6 @@ impl ChatbotV3 {
         } else {
             Vec::new()
         }
-    }
+    
     }
 }
