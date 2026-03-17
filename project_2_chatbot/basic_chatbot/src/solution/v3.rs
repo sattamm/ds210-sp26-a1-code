@@ -1,4 +1,5 @@
 use kalosm::language::*;
+use std::collections::HashMap;
 
 #[allow(dead_code)]
 pub struct ChatbotV3 {
@@ -8,6 +9,8 @@ pub struct ChatbotV3 {
     // together!
     // Need to store one chat session per user.
     // Think of some kind of data structure that can help you with this.
+    model: Llama,
+    sessions: HashMap<String, Chat<Llama>>
 }
 
 impl ChatbotV3 {
@@ -15,6 +18,8 @@ impl ChatbotV3 {
     pub fn new(model: Llama) -> ChatbotV3 {
         return ChatbotV3 {
             // Make sure you initialize your struct members here
+             model,
+            sessions: HashMap::new(),
         };
     }
 
@@ -24,7 +29,17 @@ impl ChatbotV3 {
         // Notice, you are given both the `message` and also the `username`.
         // Use this information to select the correct chat session for that user and keep it
         // separated from the sessions of other users.
-        return String::from("Hello, I am not a bot (yet)!");
+         if !self.sessions.contains_key(&username) {
+            let new_session = self.model
+                .chat()
+                .with_system_prompt("The assistant will act like a pirate");
+
+            self.sessions.insert(username.clone(), new_session);
+        }
+
+        let asynchronous_output = self.sessions.get_mut(&username).unwrap().add_message(message);
+        let output = asynchronous_output.await.unwrap();
+        output.to_string()
     }
 
     #[allow(dead_code)]
@@ -33,6 +48,12 @@ impl ChatbotV3 {
         // Hint: think of how you can retrieve the Chat object for that user, when you retrieve it
         // you may want to use https://docs.rs/kalosm/0.4.0/kalosm/language/struct.Chat.html#method.session
         // to then retrieve the history!
-        return Vec::new();
+       if let Some(chat_session) = self.sessions.get(&username) {
+            let session = chat_session.session().unwrap();
+            let history = session.history();
+            history.iter().map(|msg| format!("{:?}", msg)).collect()
+        } else {
+            Vec::new()
+        }
     }
 }
