@@ -1,10 +1,10 @@
 use kalosm::language::*;
+use std::fs;
 
 // Look at the docs for std::fs
 // https://doc.rust-lang.org/std/fs/index.html
 // std::fs provides functions that write to a file, read from a file,
 // check if a file exists, etc.
-use std::fs;
 
 // LlamaChatSession provides helpful functions for loading and storing sessions.
 // Look at https://docs.rs/kalosm/latest/kalosm/language/trait.ChatSession.html#saving-and-loading-sessions
@@ -19,9 +19,12 @@ pub fn save_chat_session_to_file(filename: &str, session: &LlamaChatSession) {
 
 // Implement this
 pub fn load_chat_session_from_file(filename: &str) -> Option<LlamaChatSession> {
+
     // look at fs::read(...)
     // also look at LlamaChatSession::from_bytes(...)
     let bytes = fs::read(filename).ok()?;
-    let mut session = LlamaChatSession::from_bytes(&bytes).unwrap();
+    let session = LlamaChatSession::from_bytes(&bytes).ok()?;
     Some(session)
+
 }
+
