@@ -53,12 +53,7 @@ impl ChatbotV5 {
                 // save the convo to the file 
                  // save the session to the file 
                 // &chat.session.unwrap() here because mismatched types
-<<<<<<< HEAD
-
                 file_library::save_chat_session_to_file(filename, &chat_session.session().unwrap());
-=======
-                file_library::save_chat_session_to_file(filename, &chat.session().unwrap());
->>>>>>> b65de3cb26e26294f50e1e3422fe05a678c71068
                 return response; 
 
             }
