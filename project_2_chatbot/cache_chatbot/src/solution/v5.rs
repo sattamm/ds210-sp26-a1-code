@@ -55,7 +55,6 @@ impl ChatbotV5 {
                  // save the session to the file 
                 // &chat.session.unwrap() here because mismatched types
                 file_library::save_chat_session_to_file(filename, &chat.session().unwrap());
-                self.cache.insert_chat(username, chat);
                 return response; 
 
             }
