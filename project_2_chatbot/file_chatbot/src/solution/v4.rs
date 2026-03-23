@@ -24,7 +24,6 @@ impl ChatbotV4 {
         Some(session) => {
             self.model
                 .chat()
-                .with_system_prompt("The assistant will act like a pirate")
                 .with_session(session)
         }
         None => {
@@ -49,7 +48,7 @@ impl ChatbotV4 {
         match file_library::load_chat_session_from_file(&filename) {
             None => {
                 return Vec::new();
-            },
+            }
             Some(session) => {
             let chat = self.model.chat().with_session(session);
             let session = chat.session().unwrap();
@@ -58,9 +57,15 @@ impl ChatbotV4 {
             let mut messages: Vec<String> = Vec::new();
 
             for message in history {
-                messages.push(String::from(message.content()));
+            let content = message.content().to_string();
+
+            
+            if content == "The assistant will act like a pirate" || content.trim().is_empty() {
+                continue;
             }
 
+    messages.push(content);
+}
             return messages;
         }
     }
