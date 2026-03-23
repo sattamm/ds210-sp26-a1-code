@@ -48,7 +48,6 @@ impl ChatbotV5 {
             Some(chat_session) => {
                 println!("chat_with_user: {username} is in the cache! Nice!");
                 //  the chat is already in memory
-                let mut chat = chat_session; 
                 // add the message to the conversation, and comes up with a response 
                 let response = chat.add_message(message).await.unwrap().to_string();
                 // save the convo to the file 
