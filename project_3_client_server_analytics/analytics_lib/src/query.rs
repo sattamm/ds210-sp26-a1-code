@@ -9,15 +9,15 @@ pub enum Condition {
 
 pub enum Aggregation {
     Count(String),
-    UniqueCount(String),
     Sum(String),
+    Average(String),
 }
 impl Aggregation {
     pub fn get_result_column_name(&self) -> String {
         match self {
             Aggregation::Count(column_name) => format!("Count({column_name})"),
-            Aggregation::UniqueCount(column_name) => format!("UniqueCount({column_name})"),
             Aggregation::Sum(column_name) => format!("Sum({column_name})"),
+            Aggregation::Average(column_name) => format!("Average({column_name})"),
         }
     }
 }

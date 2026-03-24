@@ -1,7 +1,7 @@
 use std::iter::zip;
 use csv::StringRecord;
 use csv_sniffer::{Sniffer, Type};
-use crate::dataset::{ColumnType, Dataset, Value};
+use crate::dataset::{ColumnType, Dataset, Row, Value};
 
 pub fn read_input_csv_file(filename: &str) -> Dataset {
     // Sniff CSV column types.
@@ -38,7 +38,7 @@ pub fn read_input_csv_file(filename: &str) -> Dataset {
                 _ => panic!("invalid value type in file"),
             }
         }
-        dataset.add_row(values);
+        dataset.add_row(Row::new(values));
     }
 
     return dataset;

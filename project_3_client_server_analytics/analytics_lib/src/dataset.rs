@@ -6,7 +6,7 @@ pub enum ColumnType {
     Integer,
 }
 
-#[derive(Clone, PartialEq, Hash, Eq)]
+#[derive(Clone, PartialEq, Hash, Eq, Debug, PartialOrd, Ord)]
 pub enum Value {
     String(String),
     Integer(i32),
@@ -20,6 +20,7 @@ impl Value {
     }
 }
 
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Row {
     values: Vec<Value>,
 }
@@ -49,16 +50,10 @@ impl Dataset {
             rows: Vec::new(),
         };
     }
-    pub fn add_row(&mut self, values: Vec<Value>) {
-        self.rows.push(Row::new(values));
+    pub fn add_row(&mut self, row: Row) {
+        self.rows.push(row);
     }
 
-    pub fn get_row(&self, i: usize) -> &Row {
-         return &self.rows[i];
-    }
-    pub fn len(&self) -> usize {
-        return self.columns.len();
-    }
     pub fn columns(&self) -> &Vec<(String, ColumnType)> {
         return &self.columns;
     }
@@ -75,6 +70,18 @@ impl Dataset {
         }
         panic!("Column {} not found", column_name);
     }
+
+    pub fn iter(&self) -> std::slice::Iter<'_, Row> {
+        return self.rows.iter();
+    }
+
+    pub fn into_iter(self) -> std::vec::IntoIter<Row> {
+        return self.rows.into_iter();
+    }
+
+    pub fn len(&self) -> usize {
+        return self.rows.len();
+    }
 }
 
 impl Debug for Dataset {
@@ -83,20 +90,20 @@ impl Debug for Dataset {
         write!(f, "|")?;
         for (colname, coltype) in &self.columns {
             let description = format!("{colname}: {coltype:?}");
-            write!(f, " {description: <25}|")?;
+            write!(f, " {description: <28}|")?;
         }
         writeln!(f, "")?;
 
         write!(f, "|")?;
         for _ in &self.columns {
-            write!(f, "==========================|")?;
+            write!(f, "=============================|")?;
         }
         writeln!(f, "")?;
 
         for row in &self.rows {
             write!(f, "|")?;
             for value in row.get_values() {
-                write!(f, " {: <25}|", value.to_string())?;
+                write!(f, " {: <28}|", value.to_string())?;
             }
             writeln!(f, "")?;
         }
@@ -106,5 +113,20 @@ impl Debug for Dataset {
 impl Display for Dataset {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         return Debug::fmt(self, f);
+    }
+}
+
+impl PartialEq for Dataset {
+    fn eq(&self, other: &Self) -> bool {
+        if self.columns != other.columns {
+            return false;
+        }
+
+        let mut rows = self.rows.clone();
+        rows.sort();
+        let mut rows2 = other.rows.clone();
+        rows2.sort();
+
+        return rows == rows2;
     }
 }
