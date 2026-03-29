@@ -5,6 +5,8 @@ pub struct ChatbotV4 {
     model: Llama,
 }
 
+//  if you close the terminal, then restarting it, your history is lost
+// put data in a file 
 impl ChatbotV4 {
     pub fn new(model: Llama) -> ChatbotV4 {
         return ChatbotV4 {
@@ -45,11 +47,14 @@ impl ChatbotV4 {
     pub fn get_history(&self, username: String) -> Vec<String> {
         let filename = &format!("{}.txt", username);
 
+        //tries to load the chat history
         match file_library::load_chat_session_from_file(&filename) {
             None => {
                 return Vec::new();
             }
+            //if nothing then return an empty vector
             Some(session) => {
+              //  If a file is found, you rebuild the chat with from the saved chat
             let chat = self.model.chat().with_session(session);
             let session = chat.session().unwrap();
             let history = session.history();
@@ -63,7 +68,8 @@ impl ChatbotV4 {
             if content == "The assistant will act like a pirate" || content.trim().is_empty() {
                 continue;
             }
-
+//Create an empty vector called messages, and look through every message 
+//and put in string from and push it in the message vector 
     messages.push(content);
 }
             return messages;

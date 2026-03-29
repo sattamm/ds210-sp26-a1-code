@@ -20,8 +20,10 @@ pub fn save_chat_session_to_file(filename: &str, session: &LlamaChatSession) {
 // Implement this
 pub fn load_chat_session_from_file(filename: &str) -> Option<LlamaChatSession> {
 
-    // look at fs::read(...)
-    // also look at LlamaChatSession::from_bytes(...)
+    //Read the files into bytes
+    // .ok → if the filename is empty, it treats it as none (option)
+    // Converts raw bytes into a session
+
     let bytes = fs::read(filename).ok()?;
     let session = LlamaChatSession::from_bytes(&bytes).ok()?;
     Some(session)

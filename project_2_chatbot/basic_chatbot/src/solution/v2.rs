@@ -6,6 +6,9 @@ pub struct ChatbotV2 {
     // What should you store inside your Chatbot type?
     // The model? The chat_session?
     chat_session: Chat<Llama>
+
+    //The struct stores a chat session, so you are storing the entire conversation state, 
+    //and not just the model. Now, every time you call add_mesage, the conversation grows. 
 }
 
 

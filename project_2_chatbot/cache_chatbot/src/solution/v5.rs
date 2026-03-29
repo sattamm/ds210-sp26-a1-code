@@ -15,6 +15,8 @@ impl ChatbotV5 {
             cache: Cache::new(3),
         };
     }
+    //Employing caching: keep only the needed conversations in the program’s memory
+    //LRU --> remove least recently used 
 
     pub async fn chat_with_user(&mut self, username: String, message: String) -> String {
         let filename = &format!("{}.txt", username);
@@ -39,7 +41,6 @@ impl ChatbotV5 {
                 // add the message to the conversation, and comes up with a response 
                 let response = chat.add_message(message).await.unwrap().to_string();
                 // save the session to the file 
-                // &chat.session.unwrap() here because mismatched types
                 file_library::save_chat_session_to_file(filename, &chat.session().unwrap());
                 //put into the cache 
                 self.cache.insert_chat(username, chat);
