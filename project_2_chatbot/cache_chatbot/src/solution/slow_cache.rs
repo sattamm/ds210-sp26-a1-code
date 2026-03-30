@@ -34,10 +34,31 @@ impl<V> Cache<V> {
     fn remove_least_recently_used(&mut self) {
         // TODO: your code goes here.
         // println!("Removing least recently used");
+        if self.usage_history.is_empty() {
+        return;
+        }
+
+        let temp = self.usage_history.remove(0);
+        self.hashmap.remove(&temp);
     }
     fn mark_as_most_recently_used(&mut self, username: String) {
-        // TODO: your code goes here.
-        // println!("Marking {username} as most recently used");
+        let mut index_found = None;
+        
+        // loop through the vector, see if you can find the index
+        for i in 0..self.usage_history.len(){
+            if self.usage_history[i] == username {
+                index_found = Some(i);
+                break; 
+            }
+        }
+        // if the username is found, remove it from its current position
+        if let Some(index) = index_found{
+            self.usage_history.remove(index);
+
+        }
+        //add the username to the end of the vector so it becomes the most recent
+        self.usage_history.push(username);
+
     }
 
     // Reading from the cache:
