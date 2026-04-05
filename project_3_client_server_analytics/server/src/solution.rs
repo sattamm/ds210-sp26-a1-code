@@ -1,4 +1,5 @@
 use analytics_lib::{dataset::Dataset, query::Query};
+use analytics_lib::solution::compute_query_on_dataset;
 
 pub fn hello() -> String {
     println!("hello called");
@@ -7,11 +8,11 @@ pub fn hello() -> String {
 
 pub fn slow_rpc(input_dataset: &Dataset) -> Dataset {
     println!("slow_rpc called");
-    //need a clone bc the input dataset is a reference
-    return input_dataset.clone();
+    let x = input_dataset.clone();
+    return x;
 }
 
 pub fn fast_rpc(input_dataset: &Dataset, query: Query) -> Dataset {
     println!("fast_rpc called");
-    todo!("implement");
+    return compute_query_on_dataset(input_dataset, &query);
 }

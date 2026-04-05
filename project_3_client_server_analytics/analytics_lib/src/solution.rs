@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use crate::dataset::{ColumnType, Dataset, Value, Row};
 use crate::query::{Aggregation, Condition, Query};
 
+
 pub fn check(dataset: &Dataset, row: &Row, condition: &Condition) -> bool { // this is the new function we added to return the true or false, passes by ref
     match condition {
         Condition::Equal(column, value) => {
