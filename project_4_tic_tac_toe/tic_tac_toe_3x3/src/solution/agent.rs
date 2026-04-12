@@ -13,6 +13,48 @@ impl Agent for SolutionAgent {
     fn solve(board: &mut Board, player: Player, _time_limit: u64) -> (i32, usize, usize) {
         // If you want to make a recursive call to this solution, use
         // `SolutionAgent::solve(...)`
-        unimplemented!("Not yet implemented")
+    if board.game_over() {
+        return (board.score(), 0, 0);
+    }
+
+    let possible_moves = board.moves();
+
+    let mut best_move = (0, 0);
+
+    let mut best_score = match player {
+        Player::X => i32::MIN,
+        Player::O => i32::MAX,
+    };
+
+    for x in possible_moves {
+
+        let mut new_board = board.clone();
+
+        new_board.apply_move(x, player);
+
+        let next_player = match player {
+            Player::X => Player::O,
+            Player::O => Player::X,
+        };
+
+        let (score, _, _) = SolutionAgent::solve(&mut new_board, next_player, _time_limit);
+
+        match player {
+            Player::X => {
+                if score > best_score {
+                    best_score = score;
+                    best_move = x;
+                }
+            }
+            Player::O => {
+                if score < best_score {
+                    best_score = score;
+                    best_move = x;
+                }
+            }
+        }
+    }
+    (best_score, best_move.0, best_move.1)
+
     }
 }
