@@ -15,55 +15,49 @@ impl Agent for SolutionAgent {
     fn solve(board: &mut Board, player: Player, _time_limit: u64) -> (i32, usize, usize) {
         // If you want to make a recursive call to this solution, use
         // `SolutionAgent::solve(...)`
+    if board.game_over() {
+        return (board.score(), 0, 0);
+    }
 
-        //base case, if the game is over then return the board's score
-        if board.game_over(){
-            return(board.score(), 0, 0); //we don't care about the move, so just return 0,0
-        }
+    let possible_moves = board.moves();
 
-        //vector with all legal moves from the current board 
-        let possible_moves = board.moves();
+    let mut best_move = (0, 0);
 
-        let mut best_score = match player {
-            Player::X => i32::MIN, //x wants to max the score
-            Player::O => i32::MAX, //o wants to min
+    let mut best_score = match player {
+        Player::X => i32::MIN,
+        Player::O => i32::MAX,
+    };
+
+    for x in possible_moves {
+
+        let mut new_board = board.clone();
+
+        new_board.apply_move(x, player);
+
+        let next_player = match player {
+            Player::X => Player::O,
+            Player::O => Player::X,
         };
 
-        //set a temp best move for now
-        let mut best_move = possible_moves[0]; 
+        let (score, _, _) = SolutionAgent::solve(&mut new_board, next_player, _time_limit);
 
-        for mv in possible_moves{
-            board.apply_move(mv, player); 
-
-            //recurisively solve the resulting board for the other player
-            let (child_score, _, _) = SolutionAgent::solve(board, other_player(player), _time_limit);
-
-            //undo the move so the board goes back to the original
-            //need this because we want to test the next indepdent move
-            board.undo_move(mv, player);
-
-            //update the score based on which player's turn it is
-            match player{
-                Player::X => {
-                    //x wants the move with the largest score
-                    if child_score > best_score {
-                        best_score = child_score;
-                        best_move = mv;
-                    }
-                } 
-                Player::O => {
-                    //o wants the move with the smallest score
-                    if child_score < best_score {
-                        best_score = child_score;
-                        best_move = mv;
-                    }
+        match player {
+            Player::X => {
+                if score > best_score {
+                    best_score = score;
+                    best_move = x;
                 }
             }
-
+            Player::O => {
+                if score < best_score {
+                    best_score = score;
+                    best_move = x;
+                }
+            }
         }
-        //returns a tuple with three values 
-        //the best score, and the best move's row and col
-        (best_score, best_move.0, best_move.1)
+    }
+    (best_score, best_move.0, best_move.1)
+
     }
 
     //helper function, can help switch the turns
