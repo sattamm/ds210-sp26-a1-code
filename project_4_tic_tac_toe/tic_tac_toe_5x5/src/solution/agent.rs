@@ -166,7 +166,7 @@ impl SolutionAgent {
             // See what happens if O plays this move
             let mut o_board = board.clone();
             o_board.apply_move(moves, Player::O);
-            value += o_board.score();
+            value -= o_board.score();
         }
 
         // Return the estimated value of the board
