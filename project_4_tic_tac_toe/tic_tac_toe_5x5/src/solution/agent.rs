@@ -7,6 +7,7 @@ pub struct SolutionAgent {}
 
 // Put your solution here.
 impl Agent for SolutionAgent {
+    // solve is when my agent makes a move. checks how many moves are left and chooses adepth
     fn solve(board: &mut Board, player: Player, _time_limit: u64) -> (i32, usize, usize) {
         // Count how many legal moves are left
         let moves_left = board.moves().len();
@@ -29,10 +30,10 @@ impl SolutionAgent {
     fn minmax(
         board: &mut Board,
         player: Player,
-        depth: usize,
-        max_depth: usize,
-        mut lower_bound: i32,
-        mut upper_bound: i32,
+        depth: usize, //how far ahead we have searched
+        max_depth: usize, //how far ahead we are "allowed to search
+        mut lower_bound: i32, //best score x can guarantee 
+        mut upper_bound: i32,//best score o can guarantee 
     ) -> (i32, usize, usize) {
         // If the game is finished, return a very high or low score
         if board.game_over() {
@@ -166,7 +167,7 @@ impl SolutionAgent {
             // See what happens if O plays this move
             let mut o_board = board.clone();
             o_board.apply_move(moves, Player::O);
-            value -= o_board.score();
+            value += o_board.score();
         }
 
         // Return the estimated value of the board
