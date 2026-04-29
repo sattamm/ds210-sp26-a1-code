@@ -28,6 +28,7 @@ impl Agent for SolutionAgent {
 
 impl SolutionAgent {
     fn minmax(
+        //alpha beta helps cut off branches we know wont affect the final decision
         board: &mut Board,
         player: Player,
         depth: usize, //how far ahead we have searched
@@ -40,6 +41,7 @@ impl SolutionAgent {
             let s = board.score();
             if s > 0 {
                 // X wins, and winning sooner is slightly better
+                //rather win on move 3 then on move 7
                 return (10000 - depth as i32, 0, 0);
             } else if s < 0 {
                 // O wins, and losing later is slightly better for X
@@ -50,7 +52,8 @@ impl SolutionAgent {
             }
         }
 
-        // If we reached the search limit, estimate board strength
+        //another base case, where the search depth limit has been reached
+        // If we reached the search limit, estimate board strength through heuristic function
         if depth == max_depth {
             return (SolutionAgent::heuristic(board), 0, 0);
         }
@@ -59,8 +62,10 @@ impl SolutionAgent {
         let mut available_moves = board.moves();
 
         // Try moves near the center first
+        //center moves are usually stronger and makes a-b pruning more effective
         let center = 2_i32;
         available_moves.sort_by_key(|pos| {
+            //further distance means bigger number
             let row_distance = (pos.0 as i32 - center).abs();
             let col_distance = (pos.1 as i32 - center).abs();
             row_distance + col_distance
@@ -96,9 +101,11 @@ impl SolutionAgent {
                     }
 
                     // Update the lower bound
+                    //make a "least" beast_score 
                     lower_bound = lower_bound.max(best_score);
 
-                    // Stop searching this branch if it cannot improve
+                    // pruning/cuttoff: stops exploring a branch when we know 
+                    // ... it cannot produce a better result that what we have
                     if upper_bound <= lower_bound {
                         break;
                     }
@@ -148,6 +155,12 @@ impl SolutionAgent {
         }
     }
 
+    //estimates how good a board position is when we cannot search all the way
+    //pos value --> favors x
+    // neg value --> favors o
+
+    // strategy: look 1 move ahead for every empty cell 
+    // see what each player would achieve, and sum up them to get a potiental value
     fn heuristic(board: &Board) -> i32 {
         // Get the board's current score
         let current = board.score();
